@@ -1,0 +1,10 @@
+\section{Abstract}
+\label{sec:abstract_en}
+
+Financial companies from all around the world have started to focus their investments in quantitative and algorithmic funds. Those methods run in server applications that execute automatic trades. It is important to distinguish high frequency trading from machine learning trading. The latter is used and analyzed in detail in the present work.
+
+This project explains the development of a trading strategy on Bitcoins based on machine learning techniques. A pipeline proposal is shown which is based on Lopez de Prado's book (\cite{lopez_de_prado}). Some modifications are introduced in the book's pipeline to adjust a momentum primary model on Bitcoins, and to incorporate and study features that would let estimate the size of the primary model bets (secondary model to be trained on top of the first model). The range of features to analyze goes from financial metrics derived from Bitcoin prices and volumes, to Bitcoin and blockchain related features and finally social indexes which incorporate interest and animosity towards Bitcoin itself.
+
+The pipeline proposed in \cite{lopez_de_prado} and implemented in this thesis rigorously handles the dataset, the involved models and finally the posterior backtesting strategies. Details about statistical foundation of the involved methods, algorithm complexity and implementation and domain explanations (such as those related to cryptocurrencies) can be found. The pipeline allows to gather enough information to compare and decide whether a propose strategy is good enough to be implemented. We will use this to compare models that introduce microstructure indexes such as SADF (Supremum Augmented Dickey Fuller) in comparison and conjunction with social indexes.
+
+

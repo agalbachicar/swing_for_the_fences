@@ -1,0 +1,13 @@
+\subsubsection{Social features}
+\label{sec:material_data_social_features}
+
+One of the objectives of this research effort was to evaluate the performance of a trading strategy when it incorporates social media information. Building a mood index such as CNN's fear and greed \cite{cnn_fear_and_greed} is a research project on its own. In the past year, i.e. 2020, a lot of services like that one which specialize in cryptoassets were released appeared. They incorporate data from social networks (most of them use Twitter and Reddit which offer HTTP APIs and SDKs to easily integrate in different programming languages), search data (e.g. Google) and market data (e.g. recent operated volume). Mixing these data sources, they provide an indicator that tells whether the market is eager to take long or short positions against the asset they measure.
+
+Because of the complexity of making an accurate indicator out of social media and the maturity of the provided services, instead of building my own index I have decided to incorporate date from two indexes:
+
+\begin{itemize}
+    \item Google Trends (\cite{google_trends_terms_of_use}): we have collected the trend of the keyword \emph{bitcoin} throughout time. The index goes from 0 (no interest at all) to 100 (high interest) and has a weekly sampling frequency. 
+    \item Alternative.me (\cite{alternative_me}): provides a combined index whose is range goes from 0 (extreme fear) to 100 (extreme greed) that indicates the mood of the audience that follows bitcoin. It also provides a categorical classification with five levels of the mood. This dataset contains daily data.
+\end{itemize}
+
+These two indexes are introduced and adjusted by time stamp to pair the other data entries.

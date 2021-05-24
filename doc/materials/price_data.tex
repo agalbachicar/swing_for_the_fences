@@ -1,0 +1,21 @@
+\subsubsection{Bitcoin price data}
+\label{sec:material_data_price_data}
+
+Kaggle \cite{kaggle} is a web page that hosts data science competitions. They allow people and organizations to host datasets, determine the competition terms and conditions so people can compete against each other for either the honor or of beating the others or other type of awards. In particular, there is one competition (\cite{kaggle_btc}) which holds a by-minute dataset of different bitcoin market values since the inception. Data is updated every quarter and it is provided by \emph{bitcoincharts.com} \cite{bitcoin_charts}. The dataset has the following series:
+
+\begin{itemize}
+    \item Timestamp: Start time of time window (60s window), in Unix time\footnotemark.
+    \item Open: Open price at start time window.
+    \item High: High price within time window.
+    \item Low: Low price within time window.
+    \item Close: Close price at end of time window.
+    \item Volume\_(BTC): Volume of BTC transacted in this window.
+    \item Volume\_(Currency): Volume of corresponding currency transacted in this window.
+    \item Weighted\_Price: VWAP- Volume Weighted Average Price.
+\end{itemize}
+
+\footnotetext{Unix time is a way to express timestamps in seconds that uses the integer count of seconds since epoch in January 1\textsuperscript{st}, 1970. These timestamps are always expressed in UTC as the reference is.}
+
+Dataset is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License \cite{cc_by_sa_4}.
+
+Given the massive amount of information that this dataset provides, we have created derived datasets with different sample periods: by hours and by days. To do so, we have grouped the data for the same period and computed each feature.

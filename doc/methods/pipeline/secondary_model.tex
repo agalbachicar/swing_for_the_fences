@@ -1,0 +1,89 @@
+\subsubsection{Secondary model}
+\label{sec:methods_pipeline_secondary_model}
+
+The metalabelling process allows to algorithmically determine the positiveness
+of the labels. Note that metalabels should not be included as input features
+of the model because they belong to the future of the label and one model doing
+that will not be plausible to implement on a real time system.
+Initially, all features in the feature engineering section \ref{sec:methods_features}
+will be used to build this model.
+
+This research project will use bagging trees. In chapter 6 of \cite{lopez_de_prado}
+there is a discussion about ensemble models and three are compared: bagging
+trees, random forests and boosting. Boosting is generally superior in terms of
+bias and variance results with respect to the others but it comes with, in my
+opinion, an important penalty: the training process should be done sequentially whereas
+bagging can be parallelized. The author is explicit about the other positive and
+negative aspects such as tendency to over-fitting or under-fitting, by stating
+that those claims are relative to how careful the researcher is when developing 
+the training pipeline and curating data.
+
+The focus of this research is not to get into the details of one machine
+learning model or the other, but to explain the most relevant characteristics of
+the one to be used and how its characteristics are used in favor of the research
+problem at hand. Bagging ensembles rely on multiple, $B$, decision (or
+regression but in this case we need decision) trees whose outcome is averaged 
+to reduce the high variance of each tree. Decision trees tend to be deep, in
+favor of bias reduction, but each tree variance is high. Increasing the number
+of $B$ trees does not imply an immediate shift towards over-fitting what makes
+it an appropriate hyperparameter to adjust in favor of variance reduction. See
+section 8.2.1 of \cite{intro_to_statistical_learning} for a better
+description of how bagging ensembles work.
+
+Provided that only one dataset is available, a bootstrap sample method is used.
+Bootstrapping consists of sampling the base dataset with replacement to generate
+new datasets that will be used to train each decision trees. Each new dataset is
+expected to be biased and the variance between datasets will be diminished when
+averaging, or bagging, the results of the trees. Bootstrapping can also be done
+with the features of the dataset. See section 5.2 of \cite{intro_to_statistical_learning}
+for a concise but comprehensive description to bootstrapping.
+
+The general bootstrapping method for samples assumes that all samples are IID.
+This is not our case when using the triple barrier method.
+Note that some samples might co-occur when time windows expand from the label
+timestamp to $h$ sample periods ahead. In high volatility events, or with high
+values of $h$, we should expect events, or labels, to happen while another one
+is being evaluated. Weighing these labels with respect to unique and without any
+overlap events is important to get the most out of the bootstrapping sampling
+procedure. Following Lopez de Prado's analysis, concurrent labels are defined as
+those that share at least one return attribution in the triple barrier method. 
+Let the concurrency $c_t$ at time $t$ be defined as:
+
+\[c_t = \sum_{i=1}^I l_{t,i}\]
+
+Where $l_{t,i}$ is the i-th label value that occurs at $t$ and $I$ is the number of
+label which co-occur at $t$. Labels start at a certain time $t$ but span a
+number of sampling periods that could be $h$ or the time difference with respect
+to one of the horizontal (price) barriers crossing events. Consequently, a label
+will contribute to at least two different and consecutive timestamps and up to
+$h$ consecutive timestamps.
+
+Let the uniqueness of a label $i$ at time $t$ be defined as:
+
+\[u_{t,i} = \frac{l_{t_i}}{c_t}\]
+
+And the average uniqueness will be defined as the averaged uniqueness over the
+label's lifespan:
+
+\[\bar{u}_{t,i} = \frac{\sum_{t=1}^{T} u_{t,i}}{\sum_{t=1}^{T} l_{t,i}}\]
+
+Label's average uniqueness allows a smarter bootstrap sampling method because it
+can be used to prioritize events with higher uniqueness over the ones with less
+uniqueness because the sole fact that they are weird in the dataset.
+
+Lopez de Prado proposes a change to the above uniqueness sample weight. He
+introduces the bet return also to account for an average of all the bets
+simultaneously running. To do so, a new weight $w_i$ for label $i$ is proposed:
+
+\[ \tilde{w}_i =\big| \sum_{t=t_{i,0}}^{t_{i,1}} \frac{r_{t-1,t}}{c_t} \big|\]
+
+\[ w_i = \frac{\tilde{w}_i I}{\sum_{j=1}^{I} \tilde{w}_j}\]
+
+Moving from $\tilde{w}_i$ to $w_i$ involves a scale factor to assure:
+$\sum_{i=1}^{I} w_j = I$. When training the model, the training set / fold (when
+using cross validation) will incorporate the weight with combined return and
+uniqueness attribution to differentiate rare as well as rare high-return events
+from the other concurrent and low-return events. Lopez de Prado also proposes a
+sequential bootstrap method which updates the probability of each sample in the 
+series every time a row is drawn. This process yields train sets closer to IID
+but this is not part of this research pipeline.

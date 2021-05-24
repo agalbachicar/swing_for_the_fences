@@ -1,0 +1,73 @@
+\subsubsection{Feature importance}
+\label{sec:methods_pipeline_feature_importance}
+
+Lopez de Prado's eloquent words in section 8.2 of \cite{lopez_de_prado} are very
+appropriate to illustrate what this section is about.
+
+\say{Hunters do not blindly eat everything their smart dogs retrieve for them, do they?}
+
+As a financial machine learning researcher once we are satisfied
+with the performance of a machine learning model it is advised to understand
+which, how and when features contribute to improve the performance of the model.
+The author focuses on the \emph{importance} of the features with and without
+substitution effects. In this research pipeline, only a method to consider
+substitution effects is implemented.
+
+The method is called Mean Decrease Accuracy and it uses model's estimation
+accuracy as guiding principle. Description of the method follows:
+
+\begin{itemize}
+  \item Let $X$ of be the feature matrix and let $Y$ be the output vector.
+  \item Let $X_1, X_2, X_3, ..., X_m$ be the columns of $X$.
+  \item Fit via the desired training process $m + 1$ models and measure their
+        accuracy. One model will be fitted with $X$ as is. And the other $m$
+        models will be fitted with one randomly permutated column $X_i$.
+  \item For each of the aforementioned $m$ models, compute the relative loss in
+        accuracy with respect to the base without permutation model. 
+\end{itemize}
+
+This method allows to create a rank in which once can inspect the relative loss
+of performance measured in accuracy, but it could also be F1-score or
+negative log-loss when working with classifiers. Having a high value means
+that the predictive importance of the feature is relevant. Even though this method
+is flexible and adaptable to multiple types of models as it is based on out of
+sample performance, it comes with some important drawbacks:
+
+\begin{itemize}
+  \item It is relatively slow because it requires the training of $m + 1$ models and
+        the evaluation of their performance. When this is done with purged $K$-fold cross
+        validation with embargo\emph{ed} datasets, it will definitely take time.
+  \item It is susceptible to \emph{substitution effects}. The effect can be described with two
+        or more features that are highly correlated. The performance loss will be similar so
+        a researcher might decide to remove them but with that the overall predictive 
+        capacity diminishes more than just keeping one of the features in the set
+        under study.
+  \item A possible result is that all features are detrimental or unimportant
+        for the model what is somewhat hard to interpret.
+\end{itemize}
+
+Feature orthogonalization could help to reduce the substitution effect. Two
+procedures are proposed. First, a direct application of Frisch–Waugh–Lovell theorem
+analysis can be used. Each feature is analyzed individually via a linear
+regression and residues are inspected to derive relative importance. See
+chapters 2 and 3 of \cite{econometric_theory_and_methods} for an in depth description
+of the theorem and applications. Secondly, Principal Component Analysis, i.e. PCA,
+as suggested in section 8.4.2 of \cite{lopez_de_prado} can also be used to
+determine the set of features whose eigenvalues in the orthogonalized space are
+greater. Alternatively, the feature space could also be reduced in favor of
+faster convergence of the machine learning models under use.
+
+Once all features are ranked, the researcher is required to select which
+features to drop and which ones to keep. The final set of features will be used
+to build a new model. Heuristic rules are used to drop features but as mentioned
+before researchers should be aware of the substitution effect. In this research
+project, the applied rule applied consists in computing the mean loss of
+negative log-loss and keep those features that produce higher than the mean loss
+in performance.
+
+Furthermore, researchers often face the requirement of explaining the economic
+mechanism that generates the excess return of the strategy with respect to a
+benchmark. Understanding which features contribute more to predict with increased
+confidence labels is reasonably simpler when extra unimportant features are
+removed. This stage of the process together with feature engineering are very
+important to understand how the model behaves.

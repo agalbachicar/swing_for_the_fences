@@ -1,0 +1,124 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+%-------------------------------------------------------------------------------
+% Header and footer configuration
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\chead{\small Universidad Torcuato Di Tella}
+\cfoot{\small \thepage}
+
+% Bibliography management
+% See: https://www.overleaf.com/learn/latex/Bibliography_management_in_LaTeX
+\usepackage[
+backend=biber,
+style=alphabetic,
+sorting=ynt
+]{biblatex}
+\addbibresource{references.bib}
+
+\usepackage{graphicx}
+
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=false,
+    linkcolor=black,
+    filecolor=black,      
+    urlcolor=black,
+}
+
+\usepackage{float}
+
+\usepackage{dirtytalk}
+
+\usepackage{amsmath}
+
+\usepackage{multirow}
+
+\usepackage{caption}
+\captionsetup[figure]{font=small}
+\captionsetup[table]{font=small}
+
+%-------------------------------------------------------------------------------
+\begin{document}
+
+% Front page
+\input{frontpage}
+
+\tableofcontents
+\newpage
+
+\input{abstract_en}
+\newpage
+
+\input{abstract_es}
+\newpage
+
+% @{ Introduction
+\input{introduction/intro}
+\input{introduction/problem_description}
+\input{introduction/domain}
+\input{introduction/scope}
+\newpage
+% @} Data
+
+% @{ Materials
+\input{materials/materials}
+\input{materials/price_data}
+\input{materials/bitcoin_data}
+\input{materials/social_data}
+\input{materials/software_and_tooling}
+\newpage
+% @}
+
+% @{ Methods
+\input{methods/methods}
+
+% @{ Methods:features
+\input{methods/features/introduction}
+\input{methods/features/fundamental}
+\input{methods/features/domain}
+\input{methods/features/sadf}
+\input{methods/features/social}
+% @}
+
+% @{ Methods:Pipeline
+\input{methods/pipeline/introduction}
+\input{methods/pipeline/primary_model}
+\input{methods/pipeline/secondary_model}
+\input{methods/pipeline/training}
+\input{methods/pipeline/feature_selection}
+\input{methods/pipeline/bet_sizing}
+\input{methods/pipeline/backtesting}
+% @}
+
+\newpage
+% @}
+
+% @{ Results
+\input{results/introduction}
+\input{results/model_results}
+\input{results/financial_results}
+\newpage
+% @}
+
+% @{ Conclusions
+\input{conclusions/conclusion}
+\newpage
+% @}
+
+% @{ Future work
+\input{future_work/future_work}
+\newpage
+% @}
+
+% @{ Future work
+\input{appendices/code}
+\newpage
+% @}
+\printbibliography[heading=bibintoc, title={Bibliography}]
+\newpage
+
+\end{document}
+% A Quantamental approach to Bitcoin trading: Are we swinging for the Fences?

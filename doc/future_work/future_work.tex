@@ -1,0 +1,58 @@
+\section{Future work}
+\label{sec:future_work}
+
+In this section, we list some possible variations that could be applied to the
+pipeline in the search for more performance.
+
+\paragraph{Primary model} The primary model is using one of the many implementations
+of momentum. Other alternatives can be tried using a relatively similar 
+scheme and might lead to better results without affecting anything in the pipeline.
+Furthermore, other non-momentum based primary models could be tried as well, e.g. mean reversion.
+Anyway, any change to the primary model will imply retraining the secondary model
+with the new labels.
+
+The primary model can also be applied to more than one specific asset, like other
+cryptocurrencies. That would provide more resilience to the secondary model because
+it will be trained with labels and metalables generated from different asset sources
+and reduce the risk of overfitting.
+
+\paragraph{Secondary model} As mentioned in \ref{sec:conclusion}, other models
+could be evaluated. Not only tree based models, but also neural networks or
+SVMs. Probably, further feature engineering would be required for the latter two
+and that would not necessarily be useful for the tree based models. Special
+attentions should be paid to overfitting though. A more comprehensive back
+testing strategy would be required aiming to evaluate the strategy under
+more scenarios and realize if testing data produced in excess model adjustment.
+
+\paragraph{Feature importance} Also, as commented in \ref{sec:conclusion}, 
+it is recommended to try feature orthogonalization to mitigate the effect of
+feature substitution (the analog of multi-collinearity in linear models) in the 
+trees. Implementation of that technique was out of the scope of this research
+project.
+
+About interpretability, as Lopez de Prado points out in \cite{machine_learning_for_asset_managers}, only a theory can pin down
+a cause-effect mechanism that allows you to generate excess returns. However,
+most interpretability techniques are not suited for identifying causal
+relationships unless additional assumptions are imposed (see \cite{causal_interpretations_of_bb_models}).  
+
+At this time, interpretability techniques in machine learning have become a widely used tool for practitioners. However, their outputs must be taken only as approximations of what models are doing, even if those interpretability exercises are sufficient to comply with current regulatory constraints. In this regard, how to do proper inference on the estimates of feature importance remains a current research area.  In this regard, techniques for proper inference on the estimates of feature importance remain a current research area.
+
+In another context, this point was also mentioned by Swadroe \cite{your_complete_guide_to_factor_investing} when he warns us to be skeptical about the persistence of excess returns from technical trading rules. These rules rely solely on historical prices and lack risk-based explanations that cannot be arbitraged away.
+
+
+\paragraph{Back testing} The implemented back testing strategy is not the only
+one that could be used and probably it is not the most appropriate, although the
+most common. Splitting the feature space into multiple folds and mixing them
+to create different time lines that the model could face is one the many alternatives
+that would help to create different scenarios to evaluate the model.
+
+There are several ways to obtain rich scenarios under which to stress a given strategy. For example,  with access to large data sets, Wiese, Knobloch, Korn, and Kretschmer in \cite{quant_gans} implement generative models for these purposes.
+
+It is possible to analyze if more sophisticated back testing techniques are warranted by calculating a metric called  Probability of Backtest Overfitting (PBO, \cite{lopez_de_prado}).  This metric measures the change in performance rankings for our strategies.  In particular, one can use them when assessing different trading rules.   Intuitively, an optimal trading rule overfits when it is expected to underperform the median of a set of alternative trading rules out of the sample.
+
+\paragraph{Metrics} In Andrew Lo \cite{the_statistics_of_sharpe_ratio} it is
+shown how the simplified scale of from monthly Sharpe Ratios to annual Sharpe
+Ratios cannot be simply expanded by $\sqrt{12}$ and it depends on its
+distribution. Application of the proposed equations to the benchmark would correct
+the informed Sharpe Ratio even more. 
+

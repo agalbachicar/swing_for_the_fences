@@ -1,0 +1,11 @@
+\section{Materials}
+\label{sec:materials}
+
+This section provides reference to the data inputs for the models to be developed and the software tools to implement them.
+
+In a research project like this one the use of open source and permissively provides a lot of tools to work with a very low entry cost.
+
+\subsection{Data}
+\label{sec:material_data}
+
+The reader will find a handful of data sources listed below. They belong to different providers and are licensed differently but with enough freedom to perform a research like this one. These datasets also have different formats, i.e. a small \emph{impedance mismatch} needs to be solved. Some datasets are CSV files (\cite{csv}) and others are JSON (\cite{json}) files. Making these data sources compatible is a common software engineering problem and it is solved either in the data ingestion layer or when the data is first obtained. Given that this datasets where downloaded as a whole (the entire data series), they were kept untouched and then before they are used, only those JSON files were transformed into CSV files. To do so, the pandas python library has been used. 

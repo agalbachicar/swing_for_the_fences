@@ -1,0 +1,34 @@
+\subsubsection{Bet sizing}
+\label{sec:methods_pipeline_bet_sizing}
+
+Labels and metalabels will be used together with other features to train a secondary
+model whose output estimated probability for each new label will be used to size
+the bet for that event. One way to do this is to scale the predicted probability,
+by the budget total and get value in currency for the bet. However, if we did so,
+there would not be any awareness about other concurrent bets, so we might misuse
+the available budget to run other concurrent bets. Lopez de Prado in chapter 10
+of \cite{lopez_de_prado} proposes the following:
+
+\begin{enumerate}
+  \item Let $p_{(x)}$ be the probability of label $x$ that takes the one of the
+        values in $[-1, 1]$.
+  \item Run a statistical test where $H_{0}: p_{(x=1)} = 0.5$ with the statistic
+        $z = \frac{p_{(x=1)} - 0.5}{\sqrt{0.5(1-0.5)}} = \frac{p_{(x=1)} - 0.5}{0.5}$
+  \item Let the bet size $m$ be: $m = 2 \Phi_{(z)} - 1$ where $\Phi_{(z)}$ is
+        the cumulative distribution function of the standard normal
+        distribution. $m \in [-1; 1]$
+\end{enumerate}
+
+Once we have a vector of $m$ values, which has a one to one relationship with
+each label $x$, we can average the bet with those concurrent triple barrier
+windows as the come in the pipeline. Averaging does not change the bet size
+for open windows, but changes the size for new bets that overlap with open
+windows.
+
+Finally, a portfolio manager might also consider bet size discretization by
+means of setting an integer number of equally sized budget partitions. The
+discretized value of the bet after the average is $m^* = round\Bigg( \frac{m}{d} \Bigg) d$
+where $d = \frac{1}{Number of partitions}$. And the only remaining step when
+running the strategy is to scale the budget by $m^*$ to have the final bet size
+in currency. The goal of this step is to reduce jitter which causes overtrading.
+Typical number of partitions are below ten.

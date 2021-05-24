@@ -1,0 +1,61 @@
+\subsubsection{Bitcoin features}
+\label{sec:material_data_bitcoin_features}
+
+In favor of incorporating meaningful features, Bitcoin-related data will be added. Glassnode (\cite{glassnode}) is "a blockchain data and intelligence provider that generates innovative on-chain metrics and tools for digital asset stakeholders". It offers data series under different \emph{tiers}. The free tier lets data consumers use the series in non-commercial applications (see \cite{glassnode_terms} for the terms and conditions).
+
+\begin{itemize}
+    \item Timestamp: date and time of the sample.
+    \item Addresses:
+    \begin{itemize}
+        \item \href{https://studio.glassnode.com/metrics?a=BTC&m=addresses.NewNonZeroCount}{new-addresses}: The number of unique addresses that appeared for the first time in a transaction of the native coin in the network.
+        \item \href{https://studio.glassnode.com/metrics?a=BTC&m=addresses.Count}{total-addresses}: The total number of unique addresses that ever appeared in a transaction of the native coin in the network.
+        \item \href{https://studio.glassnode.com/metrics?a=BTC&m=addresses.ActiveCount}{active-addresses}: The number of unique addresses that were active in the network either as a sender or receiver. Only addresses that were active in successful transactions are counted.
+        \item \href{https://studio.glassnode.com/metrics?a=BTC&m=addresses.SendingCount}{sending-addresses}: The number of unique addresses that were active as a sender of funds. Only addresses that were active as a sender in successful non-zero transfers are counted.
+        \item \href{https://studio.glassnode.com/metrics?a=BTC&m=addresses.ReceivingCount}{receiving-addresses}: The number of unique addresses that were active as a receiver of funds. Only addresses that were active as a receiver in successful non-zero transfers are counted.
+    \end{itemize}
+    \item Blocks:
+    \begin{itemize}
+        \item \href{https://studio.glassnode.com/metrics?a=BTC&m=blockchain.BlockCount}{blocks-mined}: The number of blocks created and included in the main blockchain in that time period.
+        \item \href{https://studio.glassnode.com/metrics?a=BTC&m=blockchain.BlockIntervalMean}{block-interval-mean}: The mean time (in seconds) between mined blocks.
+        \item \href{https://studio.glassnode.com/metrics?a=BTC&m=blockchain.BlockIntervalMedian}{block-interval-median}: The median time (in seconds) between mined blocks.
+        \item \href{https://studio.glassnode.com/metrics?a=BTC&m=blockchain.BlockSizeMean}{block-size-mean}: The mean size of all blocks created within the time period (in bytes).
+        \item \href{https://studio.glassnode.com/metrics?a=BTC&m=blockchain.BlockSizeSum}{block-size-total}: The total size of all blocks created within the time period (in bytes).
+    \end{itemize}
+    \item Fees:
+    \begin{itemize}
+        \item \href{https://studio.glassnode.com/metrics?a=BTC&m=fees.VolumeSum}{fees-total}: The total amount of fees paid to miners. Issued (minted) coins are not included.
+        \item \href{https://studio.glassnode.com/metrics?a=BTC&m=fees.VolumeMean}{fees-mean}: The mean fee per transaction. Issued (minted) coins are not included.
+    \end{itemize}
+    \item General indicators:
+    \begin{itemize}
+        \item \href{https://studio.glassnode.com/metrics?a=BTC&m=indicators.Sopr}{sopr}:The Spent Output Profit Ratio (SOPR) is computed by dividing the realized value (in USD) divided by the value at creation (USD) of a spent output. Or simply: price sold / price paid. This metric was created by Renato Shirakashi. For a detailed commentary see this \href{https://medium.com/unconfiscatable/introducing-sopr-spent-outputs-to-predict-bitcoin-lows-and-tops-ceb4536b3b9}{post}.
+        \item \href{https://studio.glassnode.com/metrics?a=BTC&m=indicators.StockToFlowRatio}{ratio} \& daysTillHalving: The Stock to Flow (S/F) Ratio is a popular model that assumes that scarcity drives value. Stock to Flow is defined as the ratio of the current stock of a commodity (i.e. circulating Bitcoin supply) and the flow of new production (i.e. newly mined bitcoins). Bitcoin's price has historically followed the S/F Ratio and therefore it is a model that can be used to predict future Bitcoin valuations, see \cite{bitcoin_stock_to_flow}.
+        \item \href{https://studio.glassnode.com/metrics?a=BTC&m=market.PriceDrawdownRelative}{price-drawdown-from-ath}: The percent drawdown of the asset's price from the previous all-time high.
+        \item \href{https://studio.glassnode.com/metrics?a=BTC&m=market.MarketcapUsd}{market-cap}: The market capitalization (or network value) is defined as the product of the current supply by the current USD price.
+        \item \href{https://studio.glassnode.com/metrics?a=BTC&m=supply.Current}{circulating-supply}: The total amount of all coins ever created/issued, i.e. the circulating supply.
+    \end{itemize}
+    \item Transactions:
+    \begin{itemize}
+        \item \href{https://studio.glassnode.com/metrics?a=BTC&m=transactions.SizeSum}{transaction-size-total}: The total size of all transactions within the time period (in bytes).
+        \item \href{https://studio.glassnode.com/metrics?a=BTC&m=transactions.Rate}{transaction-rate}: The total amount of transactions per second. Only successful transactions are counted.
+        \item \href{https://studio.glassnode.com/metrics?a=BTC&m=transactions.SizeMean}{transaction-size-mean}: The mean size of a transaction within the time period (in bytes).
+        \item \href{https://studio.glassnode.com/metrics?a=BTC&m=transactions.TransfersVolumeMedian}{transfer-volume-median}: The median value of a transfer. Only successful transfers are counted.
+        \item \href{https://studio.glassnode.com/metrics?a=BTC&m=transactions.TransfersVolumeSum}{transfer-volume-total}: The total amount of coins transferred on-chain. Only successful transfers are counted.
+        \item \href{https://studio.glassnode.com/metrics?a=BTC&m=transactions.TransfersVolumeMean}{transfer-volume-mean}: The mean value of a transfer. Only successful transfers are counted.
+        \item \href{https://studio.glassnode.com/metrics?a=BTC&m=transactions.Count}{transaction-count}: The total amount of transactions. Only successful transactions are counted.
+    \end{itemize}
+    \item Unspent / spent transactions:
+    \begin{itemize}
+        \item \href{https://studio.glassnode.com/metrics?a=BTC&m=blockchain.UtxoCreatedCount}{utx-os-created}: The number of created unspent transaction outputs.
+        \item \href{https://studio.glassnode.com/metrics?a=BTC&m=blockchain.UtxoSpentValueMean}{utxo-value-spent-mean}: The mean amount of coins in spent transaction outputs.
+        \item \href{https://studio.glassnode.com/metrics?a=BTC&m=blockchain.UtxoSpentValueMedian}{utxo-value-spent-median}: The median amount of coins in spent transaction outputs.
+        \item \href{https://studio.glassnode.com/metrics?a=BTC&m=blockchain.UtxoSpentValueSum}{utxo-value-spent-total}: The total amount of coins in spent transaction outputs.
+        \item \href{https://studio.glassnode.com/metrics?a=BTC&m=blockchain.UtxoCreatedValueSum}{utxo-value-created-total}: The total amount of coins in newly created UTXOs.
+        \item \href{https://studio.glassnode.com/metrics?a=BTC&m=blockchain.UtxoSpentCount}{utx-os-spent}: The number of spent transaction outputs.
+        \item \href{https://studio.glassnode.com/metrics?a=BTC&m=blockchain.UtxoCreatedValueMean}{utxo-value-created-mean}: The mean amount of coins in newly created UTXOs.
+    \end{itemize}
+\end{itemize}
+
+As the reader might have already realized, all these features introduce a lot of network information. However, its use in the model will be evaluated later on based on performance metrics.
+
+All these features have been downloaded in one JSON file each and using the pandas library they have been merged into one single CSV file that has the same format as the bitcoin price and volume in section \ref{sec:material_data_price_data}.

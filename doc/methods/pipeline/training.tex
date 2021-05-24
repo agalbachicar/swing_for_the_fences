@@ -1,0 +1,107 @@
+\subsubsection{Training}
+\label{sec:methods_pipeline_training}
+
+The training stage involves tweaking both the primary model and the secondary
+model. The primary model has the following hyperparameters:
+
+\begin{itemize}
+  \item Fast window period: the number of periods to average the price signal
+        for the fast moving average signal.
+  \item Slow window period: the number of periods to average the price signal
+        for the slow moving average signal.
+  \item Stop loss ratio: the price ratio when a label occurs that will determine
+        the lower price barrier to determine the triple-barrier frontier.
+  \item Profit taking ratio: the price ratio when a label occurs that will
+        determine the higher price barrier to determine the triple-barrier
+        frontier.
+  \item Volatility time window: when applying the triple barrier method, a
+        volatility series is computed out of daily returns. Volatility series is
+        the result of an exponentially weighted moving average which takes the
+        time window long samples and computes the standard deviation of it. This 
+        series is used together with the minimum return.
+  \item Minimum return: the primary model generates labels which involve really
+        low returns and can be considered noisy samples. This threshold works 
+        as a filter to discard these labels before they become part of the
+        primary model output.
+\end{itemize}
+
+On the other hand, we have the secondary model which is a classifier. This
+classifier will be used to determine the size of the bets. In section \ref{sec:methods_pipeline_secondary_model}
+it was mentioned that it will be a Bagging classifier whose parameters are:
+
+\begin{itemize}
+  \item Number of estimators: the number of trees to train ($B$)
+        and then take the majority vote for each new estimation.
+  \item Number of samples per estimator: the fraction of samples in the dataset
+        to sample with or without bootstrap. This value is set to the average
+        uniqueness of all labels.
+  \item Use bootstrap: whether to use or not bootstrap sampling. This value is
+        set to true. On top of it, when fitting, the particular label uniqueness
+        is used.
+  \item Maximum of features to use: out of all predictors, how many features per
+        estimator to use. No bootstrap is used at the predictor level, just a
+        sampling. 
+\end{itemize}
+
+Unless explicitly mentioned, all hyperparameters are optimized. For the primary model,
+the following criteria is used:
+
+\begin{itemize}
+  \item For certain combinations of hyperparameters, there might not be
+        enough labels and metalabels to train the secondary model training process.
+        Also, the primary model might output a too imbalanced set of labels and
+        metalabels which end up causing trouble when training because of lack of
+        one class of metalabel. The generated model out of that hyperparameters are
+        discarded. 
+  \item For certain combinations of hyperparameters, there might be very little
+        amount of samples. These combinations are discarded.
+  \item Using a quite simple secondary model of the same nature but without
+        optimized hyperparameters, we choose the combination of primary model
+        hyperparameters that yield better secondary performance.
+\end{itemize}
+
+Performance in the secondary model is evaluated with negative logarithmic loss.
+Typically, classifiers use F1-score because they provide a good balance between
+precision and recall (its the harmonic mean between both). In this case, we are
+mostly interested in selecting models based on the predicted probabilities
+because that is used to size bets.
+
+Secondly, once the primary model hyperparameters have been selected, a full
+model optimization for the secondary model is done. Again, negative logarithmic loss is
+used to determine the best model. Following Lopez de Prado recommendations in
+chapter 7 of \cite{lopez_de_prado}, purged $K$-fold cross validation with embargo
+is used to train the secondary model.
+
+\paragraph{Purge:} when the classification output at time $t$, i.e. metalabel,
+depends on the value of the predictor(s) at two or more sample values, we have
+an inter-time dependency of the output with several of the predictors that might
+lead to leakage if they are not properly purged. The purge strategy consists on
+removing the predictor and classification outputs that are concurrent in
+adjacent training and test folds. There are three situations that would make two
+labels concurrent:
+
+\begin{itemize}
+  \item Label $i$ starts inside the triple barrier period of label $j$.
+  \item Evaluation of metalabel $i$ ends inside the triple barrier period of
+        label $j$.
+  \item Evaluation of label $j$ starts and ends inside the triple barrier period
+        of label $i$.
+\end{itemize}
+
+In addition to this concurrency effect, there is another effect that produces
+information leakage between train-test splits. Suppose a label that is assigned
+to a test fold and it is generated from data that is spread in multiple
+labels both in train and test folds even though there is no label concurrency
+involved, there will be leakage. In this case purge is also required to mitigate
+leakage.
+
+
+\paragraph{Embargo:} when there is no clear time span that is required to ban
+from the adjacent training and test folds to avoid leakage due to the nature of
+the classification output generation process, the embargo technique can be used.
+It consist of removing a percentage of samples in the train fold that are right
+after the test fold beginning. Note that there is no need to remove samples from
+the end of the test fold when it is adjacent to another training fold because
+those samples will simply not contribute to train the model for the first set
+of labels. The percentage is usually low, e.g. 1\%, and provides enough data
+pruning to run the training stage without noticeable leakage.

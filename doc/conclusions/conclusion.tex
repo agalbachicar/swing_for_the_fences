@@ -1,0 +1,57 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+Along this research project a trading strategy over bitcoin with a machine
+learning model to learn the bet size was developed and evaluated in modest but
+comprehensive back testing benchmark. It was heavily based on the proposed
+pipeline of Marcos Lopez de Prado and used some relatively novel variations to
+a standard financial pipeline to test and evaluate a strategy. Careful feature
+handling, rigorous training and validation techniques are described in each
+section of this report.
+
+The structure of this pipeline allows to change features, change a primary model,
+change a secondary model or even the back testing strategy but preserve the other
+building blocks because the interfaces are the same. The primary model should 
+generate labels and metalabels to train a secondary model. The secondary model
+will provide a probability to perform the bet sizing. Feature engineering will
+be necessary to discard irrelevant features and explain the economic mechanism
+why the strategy produces excess returns. The back testing could be more
+comprehensive and incorporate new metrics but each stage preserves its interface.
+
+As commented in \ref{sec:model_results} features from all the groups (price, volume, volatility, bitcoin network data, SADF indexes, and social indexes) remained in
+the purged model except social indexes. Interest and animosity were removed
+according to the heuristic rule to prune features that did not make a significant
+impact on the performance loss. This result is important because it refuses one
+of the preliminary intuitions for the secondary model. It was initially based on the belief
+that knowing the social interest would affect the performance of the bet sizing
+process. However, we probably assume that social indexes do not provide significant
+new data that models can use because it is already incorporated into, e.g. prices.
+On the contrary, a handful of SADF derived indexes remained and proved
+to have higher mean loss of performance. Similarly, bitcoin ecosystem features and
+traditional price and volume features remained in the final model.
+
+Metrics for the secondary model performance are relatively bad ones compared to
+other disciplines or domains. Also, as a classifier, it is by no means a good one.
+However, the selection and training criteria that we used was to maximize the
+negative log-loss of the model because the predicted probability is what
+actually matters at the moment of implementing the strategy. It is worth noting
+that even though a primary model with high accuracy can lead important losses if
+the bet size is not properly computed when the primary model fails.
+
+An increase in the negative log-loss is desired though and might be accomplished with further
+analysis to the features. Lopez de Prado describes other techniques in chapter
+8 of \cite{lopez_de_prado} to fight back the substitution effect that would lead
+to the removal of important features. Also, with special care to overfitting, 
+more complex machine learning models could be tested but that requires a back
+testing scheme that stresses much more the strategy.
+
+Section \ref{sec:results} provides a comprehensive set of metrics for each model
+and the strategy as a whole. Some indicators lean towards
+the strategy under test as it offers less volatility, higher win loss ratio
+and Sortino ratio. However, the estimated Sharpe Ratio is smaller. When analyzing
+the Probabilistic Sharpe ratio both strategies perform really bad and fall
+rapidly when comparing them with different target ratios. Consequently, we 
+cannot assure that they are considerably different based on the back testing evaluation.
+It is also important to note that the Probabilistic Sharpe Ratio incorporates
+a non-normality correction but the huge kurtosis and skewness coefficients make
+the PSR probability to quickly drop.

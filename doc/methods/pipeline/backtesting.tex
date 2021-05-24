@@ -1,0 +1,240 @@
+\subsubsection{Back testing}
+\label{sec:methods_pipeline_backtesting}
+
+This section focuses on explaining how this exercise would be 
+carried out, the differences with respect to the implemented
+back testing strategy and how benchmarking metrics are affected.
+Also, metrics are explained.
+
+\paragraph{Strategy} The strategy will start at certain date with an
+initial budget of \$1,000,000 dollars (USD) to spend as both 
+the primary and secondary model dictate. Every day, new features are gathered
+and processed together with the historical data. Feed the selected set of
+columns that conform the secondary model and the primary model determines
+whether a new label and metalabel should be created and then the secondary model
+proposes a probability for that metalabel. The bet sizing transformation will
+scale and determine a dollar level for the bet. Depending on the position the
+primary model proposes and the bet size, the following steps are conducted:
+
+\begin{itemize}
+  \item When placing a long position and the bet size is not zero:
+  \begin{enumerate}
+    \item Bet size dollars are taken from the portfolio at time $t$.
+    \item Bet size dollars are used to buy bitcoins. The BTC/USD
+          rate is the price at the moment where the order takes place. From the
+          bet size dollars, the exchange buy fee is discounted from the bet
+          size.
+    \item We hold the long position until one of the three barriers
+          of the triple barrier boundaries is crossed by the price 
+          path. The primary model defined by hyperparameter 
+          optimization a value for the stop loss, the profit taking and the
+          holding period for the triple barrier, those values are computed based
+          on the bitcoin price level at $t$.
+    \item When the price series crosses any of the barriers, the 
+          long position is closed and a sell fee is paid to the exchange.
+    \item At this point, the value of the portfolio would be damaged 
+          because of the buy and sell fees and benefited from the
+          expected rise in bitcoin valuation measured in dollars. It
+          is worth pointing out that the bet could end up having a
+          net negative effect on the value of the portfolio.
+  \end{enumerate}
+  \item When placing a short position and the bet size is not zero:
+  \begin{enumerate}
+    \item Bet size dollars are taken from the portfolio at time $t$.
+    \item A loan in bitcoins is requested. The bet size amount is
+          used to pay the loan and pay the collateral amount.
+    \item Those bitcoins are sold, consequently we get their 
+          dollar valuation minus the sell fee of the exchange.
+    \item We hold the short position until one of the three barriers
+          of the triple barrier boundaries is crossed by the prices path. The
+          primary model defined by hyperparameter optimization a value for the
+          stop loss, the profit taking and the holding period for the triple
+          barrier, those values are computed based on the bitcoin price level
+          at $t$.
+    \item When the price series crosses any of the barriers, the 
+          short position is closed. In this case, bitcoins are bought
+          to complement the collateral amount and return the loan interest.
+    \item At this point, the value of the portfolio would be damaged 
+          because of the buy and sell fees and the loan interest. However, it
+          would benefit from the price drop and the short position.
+  \end{enumerate}
+\end{itemize}
+
+The aforementioned procedures are iterated over the lifespan of the strategy and
+must be monitored as any other strategy. Also, it is worth mentioning the risks
+involved in the operation:
+
+\begin{itemize}
+  \item If the price path rapidly crosses the upper price level barrier before a 
+        new price sample comes in (when evaluating sell orders) or it crosses the lower price
+        level barrier before a new price sample comes in (when evaluating buy orders), there is
+        an extra cost incurred due to a lack of live price monitor. It can be
+        mitigated by having such monitor and an automatic order placing system.
+  \item If having automatic control to place orders, the price path can simply
+        not be enough to pay off the fees, even though the net return the price only is positive (accounting the transaction cost reduces the net profit from the trade).
+\end{itemize}  
+
+The portfolio manager will also have to consider how the collateral valuation
+varies with time. Note that many bets time windows can overlap which
+could cause budget starvation if highly confident bets co-occur.
+Consequently, the collateral valuation will be affected by all short and
+concurrent positions and with the price variations of the asset under management
+and will reduce the effective return of each bet because of the compromised
+savings to pay back the loan. However, it is worth mentioning that in case of a
+an undesired rise in prices, the collateral will help to reduce the impact.
+
+In this research project, we make the following assumptions:
+
+\begin{itemize}
+  \item Buy and sell exchange fees might vary over time. For simplicity, they
+        are kept the same for the entire back testing period.
+  \item Loan interests vary their every day. For
+        simplicity, they are kept the same for the entire back testing period.
+  \item Collateral budgets are not considered. Instead, a penalty to the loan
+        interest is added.
+  \item Because of considering the collateral budget as an extra interest, the
+        value of the portfolio does not benefit from intra bet windows
+        bitcoin price variation.
+  \item Orders might not get processed during high price corrections. Those
+        scenarios are not contemplated either.
+\end{itemize}
+
+In general, all of these simplifications will imply higher performance which is
+perceived as excess returns.
+
+As a reference, table \ref{table:benchmark_fees} contains the fees and rates involved in the strategy.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{| c | c |} 
+    \hline
+    \multicolumn{2}{|c|}{Fees} \\
+    \hline
+    Fee & Value \\
+    \hline
+    Buy & 0.10\% \\
+    \hline
+    Sell & 0.10\% \\
+    \hline
+    Loan interest & 5\% \\
+    \hline
+  \end{tabular}
+  \caption{Financial metrics benchmark.}
+  \label{table:benchmark_fees}
+\end{table}
+
+Buy and sell fees were take from Binance \cite{binance_fees} and loans from 
+DefiRate \cite{defi_rate_loans} where an average has been done and a 1\% extra
+has been added.
+
+\paragraph{Benchmark} A base strategy is required to provide a reference and
+compare against the output strategy of this research. Buying bitcoins the first
+day and holding them until the last day of the testing period will be used. This
+is an obvious choice because machine learning enhanced momentum is used over this
+asset and would set a valid benchmark for this strategy.
+
+\paragraph{Metrics} The secondary model will be measured with two metrics which
+are appropriate for classification problems. The F1-score as a measure of the 
+accuracy of the classifier. Then, to measure classifier performance, negative
+logarithmic loss will be used to assess how well predicted probabilities adjust
+to validation labels.
+
+The strategy will be evaluated by the following metrics which also cover different
+types:
+
+\begin{itemize}
+  \item Performance metrics:
+  \begin{itemize}
+    \item Win loss ratio: the ratio between positive returns and negative returns.
+          The bigger the ratio, the better.
+    \item Win rate: the ratio of positive returns over the total number of
+          returns. The bigger the ration, the better.
+    \item Average return: the arithmetic average of all returns. It is an estimate of the
+          true mean return.
+  \end{itemize}
+  \item Efficiency metrics:
+  \begin{itemize}
+    \item Sharpe Ratio: measures the ratio between the average sample returns minus a risk free interest rate\footnotemark, and
+          the sample standard deviation. It provides an estimate of the true
+          Sharpe Ratio.
+    \item Probabilistic Sharpe Ratio: expresses the probability that estimated
+          Sharpe Ratio (see above) is higher than a benchmark Sharpe Ratio. See
+          below for an in detail discussion.
+    \item Sortino ratio: it is similar to the Sharpe Ratio in the sense that provides a
+          a risk adjusted return ratio but it penalizes negative returns. It is
+          generally a better choice to compare skewed return distributions. As the
+          Sortino ratio increases the strategy becomes more appealing for a given
+          benchmark target return. See \cite{sortino_a_sharper_ratio} for an
+          analysis and explanation of the ratio.
+  \end{itemize}
+  \item Implementation shortfall metrics:
+  \begin{itemize}
+    \item Return on execution costs: ratio between the sum of all net returns
+          (after operation costs) and the sum of all transaction costs. The bigger
+          the ratio is, the more confident a portfolio manager will be about the
+          strategy. Transaction costs cannot be known beforehand and high values
+          cover for increased costs at execution time.
+  \end{itemize}
+  \item General metrics:
+  \begin{itemize}
+    \item Correlation to underlying: the correlation between the strategy and the
+          underlying investment universe. As it gets closer to one or minus one,
+          the closer it is to the benchmark strategy.
+    \item Volatility: the standard deviation of the returns. It is an estimate of
+          the true return standard deviation.
+  \end{itemize}
+\end{itemize} 
+
+\footnotetext{Using US treasury yield annual curves \cite{treasury_yield}, one can observe that risk free interest rates vary from 0.05\% to 2.74\%. It means that the daily risk free interest rate varies from $2.73 x 10^{-6}$ to $7.4 x 10^{-5}$. It was simply considered zero.}
+
+Moreover, it is important to discuss the Probabilistic Sharpe Ratio. It was
+introduced in \cite{sharpe_paper} which compliments the information of the
+estimated Sharpe Ratio which is usually provided in financial benchmarks.
+For both strategies, the benchmark and the strategy under test, the true mean
+and standard deviation of the Sharpe Ratio is and will remain unknown. Back
+testing over past or generated data will only provide an estimate that adjusts
+to the sample consequently, the Probabilistic Sharpe Ratio helps to understand
+which is the probability that the estimated Sharpe Ratio is bigger than a set of
+target ratios.
+
+Furthermore, the estimate of the Sharpe Ratio mean comes from non IID return samples. Hence, Bailey and 
+Lopez de Prado introduced an adjustment by skewness and kurtosis to the standard
+error used in the statistical test. Then, it is appropriate to use a series of
+target Sharpe Ratio to compare with and determine the probability that the
+estimated Sharpe Ratio of our strategy is bigger for proposed target ratios. As a
+reference, the Sharpe Ratio and the Probabilistic Sharpe Ratio formulas are copied
+below.
+
+\[\hat{SR} = \frac{\hat{r}}{s_{r}}\]
+
+Where:
+
+\begin{itemize}
+  \item $\hat{SR}$ is the estimated Sharpe Ratio.
+  \item $\hat{r}$ is the average return.
+  \item $\hat{s_{r}}$ is the sample standard deviation of the returns.
+\end{itemize}
+
+\begin{equation}
+  \label{eqn:prob_sharpe_ratio}
+  \hat{PSR}_{(SR^*)} = \Phi \Bigg( \frac{(\hat{SR} - SR^*) \sqrt{N-1}}{\sqrt{1 - \hat{\gamma_3}\hat{SR} + \frac{\hat{\gamma_4} - 1}{4}\hat{SR}^2}} \Bigg)
+\end{equation}
+
+Where:
+
+\begin{itemize}
+  \item $\hat{PSR}_{(SR^*)}$ is the Probabilistic Sharpe Ratio for the reference
+        Sharpe Ratio $SR^*$.
+  \item $N$ is the number of returns in the sample to compute the index.
+  \item $\hat{\gamma_3}$ is the sample return skewness.
+  \item $\hat{\gamma_4}$ is the sample return kurtosis.
+  \item $\Phi()$ is the cumulative distribution function of the standard Normal
+        distribution.
+\end{itemize}
+
+\paragraph{Taxation} A potentially relevant “transaction cost” relates to taxes.
+For example, in the US, and depending on the tax bracket, federal taxes for
+short-term capital gains are taxed at up to 37\%\footnotemark . Capital gain taxes would
+disfavor active trading on a highly volatile asset in our results.
+
+\footnotetext{See \href{https://www.irs.gov/pub/irs-drop/rp-19-44.pdf}{26 CFR 601.602: Tax forms and instructions.}}

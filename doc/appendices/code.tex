@@ -1,0 +1,33 @@
+\section{Appendix}
+\label{sec:appendix}
+
+\subsection{Code}
+\label{sec:appendix_code}
+
+The code in this project is available on \href{https://github.com/agalbachicar/swing_for_the_fences}{https://github.com/agalbachicar/swing\_for\_the\_fences} and licensed under BSD 3-Clause "New" or "Revised" License. You can 
+find in this \href{https://tldrlegal.com/license/bsd-3-clause-license-(revised)}{link}
+what you can and cannot do with it. In the \emph{src} folder you will find:
+
+\begin{itemize}
+  \item bet\_sizing.py: contains functions to perform the bet sizing procedures explained in section \ref{sec:methods_pipeline_bet_sizing}
+  \item btc\_strategy.py: contains many functions and classes that act as wrappers and implement the pipeline.
+  \item cv.py: contains cross validation functions and classes that implement the purged $K$-fold cross validation with embargo. See section \ref{sec:methods_pipeline_training} for a reference about the techniques.
+  \item events.py: contains functions that allow to obtain the labels by means of a momentum strategy. See section \ref{sec:methods_pipeline_primary_model}.
+  \item feature\_importance.py: contains functions to evaluate the mean feature importance loss. See section \ref{sec:methods_pipeline_feature_importance}.
+  \item features.py: contains functions to compute financial features out of a price series. See section \ref{sec:methods_features_fundamental}.
+  \item frac\_diff.py: contains functions that implement the fractional differentiation method. See section \ref{sec:methods_features}.
+  \item labelling.py: contains functions to implement labels and metalabels for price series. See section \ref{sec:methods_pipeline_primary_model}.
+  \item load\_data.py: contains functions to load and merge datasets.
+  \item mpfin.py: contains functions from chapter 20 of \cite{lopez_de_prado} for parallel execution of certain algorithms.
+  \item pipeline\_thesis.py: main Python script to run and evaluate different stages of the pipeline.
+  \item sample\_weights.py: contains functions to implement sample weights. See section \ref{sec:methods_pipeline_secondary_model}.
+  \item sharpe\_ratio\_stats.py: contains functions to compute Sharpe Ratio and Probabilistic Sharpe Ration. See section \ref{sec:methods_pipeline_backtesting}.
+  \item strategy\_backtesting.py: implements the back testing strategy and obtains results. See \ref{sec:methods_pipeline_backtesting} and \ref{sec:results}.
+  \item structural\_breaks.py: contains functions to compute SADF series. See section \ref{sec:methods_features_sadf}. 
+\end{itemize}
+
+\emph{src/notebooks} folder contains some Jupyter Python notebooks to generate the images in this research project.
+
+\emph{datasets} folder contains all datasets used in this project. Also, \emph{pickle} files with models, metrics and hyperparameter values are stored there by default for convenience.
+
+\emph{doc} folder contains the latex project to generate this document.
